@@ -12,10 +12,9 @@ const mainController = {
       .catch((error) => console.log(error));
   },
   bookDetail: (req, res) => {
-    db.Book.findByPk(req.params.id)
-    .then(books => {
-        res.render('bookDetail', { books });
-    })    
+    const id = req.params.id
+    db.Book.findByPk(id)
+    .then(books => res.render("bookDetail", {books}))
     // Implement look for details in the database
   },
   bookSearch: (req, res) => {
@@ -65,6 +64,19 @@ const mainController = {
     res.render('home');
   },
   edit: (req, res) => {
+    let bookId = req.params.id;
+    db.Books.update({
+        name: req.body.name,
+        price: req.body.price,
+        categoryId: req.body.category,
+        description: req.body.description
+    }, {
+        where: { id: productId }
+    }) 
+        .then(() => {
+            return res.redirect("/productos/productsList");
+        })
+        .catch(error => res.send(error))  
     // Implement edit book
     res.render('editBook', {id: req.params.id})
   },
