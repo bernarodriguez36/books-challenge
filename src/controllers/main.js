@@ -56,19 +56,29 @@ const mainController = {
       .catch((error) => console.log(error));
   },
   login: (req, res) => {
+
     // Implement login process
     res.render('login');
   },
   processLogin: (req, res) => {
     // Implement login process
-    res.render('home');
+    let userToLog = User.findByField("email", req.body.email)
+   if (userToLog) {
+
+   }
+   return res.render('users/login', {
+    errors: {
+email: {
+  msg: 'No se encuentra el email'
+}
+    } })
+    /* res.render('home'); */
   },
   edit: (req, res) => {
-    let bookId = req.params.id;
+    Id = req.params.id;
     db.Books.update({
-        name: req.body.name,
-        price: req.body.price,
-        categoryId: req.body.category,
+        title: req.body.title,
+        cover: req.body.cover,
         description: req.body.description
     }, {
         where: { id: productId }
