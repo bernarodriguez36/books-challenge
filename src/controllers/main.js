@@ -40,6 +40,7 @@ const mainController = {
     res.render('authorBooks');
   },
   register: (req, res) => {
+    res.cookie('Test', {maxAge: 1000 * 30});
     res.render('register');
   },
   processRegister: (req, res) => {
@@ -106,6 +107,11 @@ email: {
   processEdit: (req, res) => {
     // Implement edit book
     res.render('home');
+  },
+
+  logout: (req, res) => {
+    req.session.destroy();
+    return res.redirect('/');
   }
 };
 
