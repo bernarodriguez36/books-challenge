@@ -63,13 +63,24 @@ const mainController = {
   processLogin: (req, res) => {
     // Implement login process
     let userToLog = User.findByField("email", req.body.email)
-   if (userToLog) {
-
+   if (userToLog) { 
+    let passwordCorrect = bcryptjs.compareSync(req.body.password, userToLog.password);
+if (passwordCorrect) {
+return res.redirect('/')
+}
+return res.render('users/login', {
+  errors: {
+email: {
+msg: 'Credenciales incorrectas'
    }
-   return res.render('users/login', {
+  }
+});
+   }
+   
+return res.render('users/login', {
     errors: {
 email: {
-  msg: 'No se encuentra el email'
+  msg: 'Email no registrado'
 }
     } })
     /* res.render('home'); */
