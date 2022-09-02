@@ -66,6 +66,8 @@ const mainController = {
    if (userToLog) { 
     let passwordCorrect = bcryptjs.compareSync(req.body.password, userToLog.password);
 if (passwordCorrect) {
+  delete userToLog.password;
+  req.session.userLogged = userToLog;
 return res.redirect('/')
 }
 return res.render('users/login', {
