@@ -40,7 +40,6 @@ const mainController = {
     res.render('authorBooks');
   },
   register: (req, res) => {
-    res.cookie('Test', {maxAge: 1000 * 30});
     res.render('register');
   },
   processRegister: (req, res) => {
@@ -69,6 +68,9 @@ const mainController = {
 if (passwordCorrect) {
   delete userToLog.password;
   req.session.userLogged = userToLog;
+  if (req.body.remember-user) {
+    res.cookie('userEmail', req.body.email, {maxAge: (1000 * 60) * 2 })
+  }
 return res.redirect('/')
 }
 return res.render('users/login', {
@@ -110,6 +112,7 @@ email: {
   },
 
   logout: (req, res) => {
+    res.clearCookie('userEmail');
     req.session.destroy();
     return res.redirect('/');
   }
