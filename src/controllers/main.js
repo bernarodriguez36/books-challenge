@@ -115,6 +115,11 @@ email: {
     res.render('editBook', {id: req.params.id})
   },
   processEdit: (req, res) => {
+    let id = req.params.id
+    db.Books.findByPk(id)
+        .then(book => {
+            return res.render('books', { book })
+        });
     // Implement edit book
     res.render('home');
   },
