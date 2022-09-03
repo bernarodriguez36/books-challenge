@@ -25,7 +25,15 @@ const mainController = {
     res.render('search');
   },
   deleteBook: (req, res) => {
-    // Implement delete book
+    // Implement delete book // Revisar delete
+    let id = req.params.id;
+        db.Books.destroy({
+            where: { id: id }, forcer: true
+        })
+        .then(() => {
+            return res.redirect("/books/edit"); // Revisar este redirect
+        })
+        .catch(error => res.send(error)) 
     res.render('home');
   },
   authors: (req, res) => {
@@ -97,10 +105,10 @@ email: {
         cover: req.body.cover,
         description: req.body.description
     }, {
-        where: { id: productId }
+        where: { id: productId } // Acá sería bookId?
     }) 
         .then(() => {
-            return res.redirect("/productos/productsList");
+            return res.redirect("/books/edit"); // Es correcto este redirect?
         })
         .catch(error => res.send(error))  
     // Implement edit book
