@@ -1,6 +1,7 @@
 const bcryptjs = require('bcryptjs');
 const db = require('../database/models');
 
+
 const mainController = {
   home: (req, res) => {
     db.Book.findAll({
@@ -20,9 +21,11 @@ const mainController = {
   bookSearch: (req, res) => {
     res.render('search', { books: [] });
   },
-  bookSearchResult: (req, res) => {
+  bookSearchResult: async (req, res) => {
     // Implement search by title
-    res.render('search');
+    let books = await db.Book.findOne({where:{title: `${req.body.title}`}})
+    
+    res.render('bookDetail',{ books});
   },
   deleteBook: (req, res) => {
     // Implement delete book // Revisar delete
@@ -55,7 +58,7 @@ const mainController = {
       Name: req.body.name,
       Email: req.body.email,
       Country: req.body.country,
-      Pass: bcryptjs.hashSync(req.body.password, 10),
+      Pass: bcryptjs.hashSync(`${eq.body.password}`, 10),
       CategoryId: req.body.category
     })
       .then(() => {
@@ -63,25 +66,34 @@ const mainController = {
       })
       .catch((error) => console.log(error));
   },
-  login: (req, res) => {
+  login: async(req, res) => {
 
     // Implement login process
-    res.render('login');
-  },
-  processLogin: (req, res) => {
-    // Implement login process
-    let userToLog = User.findOne("email", req.body.email)
+    let userToLog = await db.User.findOne({where:{email: `${req.body.email}`}})
    if (userToLog) { 
-    let passwordCorrect = bcryptjs.compareSync(req.body.password, userToLog.password);
+    let passwordCorrect = bcryptjs.compareSync(`${req.body.password}`, `${userToLog.password}`);
 if (passwordCorrect) {
   delete userToLog.password;
   req.session.userLogged = userToLog;
+  
+}}
+    res.render('login');
+  },
+  processLogin: async(req, res) => {
+    // Implement login process
+    let userToLog = await db.User.findOne({where:{email: `${req.body.email}`}})
+   if (userToLog) { 
+    let passwordCorrect = bcryptjs.compareSync(`${req.body.password}`, `${userToLog.password}`);
+if (passwordCorrect) {
+  delete userToLog.password;
+  req.session.userLogged = userToLog;
+  
   if (req.body.remember-user) {
     res.cookie('userEmail', req.body.email, {maxAge: (1000 * 60) * 2 })
   }
-return res.redirect('/')
+ return res.render('home', {userToLog})
 }
-return res.render('users/login', {
+return res.render('home', {
   errors: {
 email: {
 msg: 'Credenciales incorrectas'
@@ -90,7 +102,7 @@ msg: 'Credenciales incorrectas'
 });
    }
    
-return res.render('users/login', {
+return res.render('login', {
     errors: {
 email: {
   msg: 'Email no registrado'
